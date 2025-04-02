@@ -42,30 +42,35 @@ library(patchwork)
 library(magrittr)
 library(tidyverse)
 
+
+is.na(se)
+
+
 #treure valors na
-class(de)
-dim(se$AN006228)
+
+class(m1)
+dim(m1)
 imputed<-PomaImpute(m1,method="knn", zeros_as_na=TRUE, remove_na=TRUE,cutoff=20)
-dim(imputed)
+imputed
 normalized<-PomaNorm(imputed,method="log_pareto")
 normalized
 PomaBoxplots(normalized,x="samples")+
   ggtitle("normalized")+
   theme(legend.position="none")
-PomaBoxplots(x,x="samples")
-PomaDensity(x,x="samples")
+PomaBoxplots(m1,x="samples")
+PomaDensity(m1,x="samples")
 
 
 PomaOutliers(normalized,do=clean)
-PomaOutliers(normalized,
-             do="clean",
+do<-PomaOutliers(normalized,
              method="euclidean",
              type="median",
              outcome="Diet",
              coef=2,
              labels=FALSE
 )
-outlier_results<-PomaOutliers(normalized,
+do$polygon_plot
+PomaOutliers(normalized,
                               method="euclidean",
                               type="median",
                               outcome="Treatment",
@@ -75,7 +80,8 @@ outlier_results<-PomaOutliers(normalized,
 
 
 PomaOutliers(outlier_results,do="clean")
-PomaUnivariate(normalized,method="ttest",covs=NULL,error=NULL, paired=FALSE,adjust="fdr")
+
+PomaUnivariate(normalized,method="ttest",covs= Null,error=NULL, paired=FALSE,adjust="fdr")
 
 
 PomaPCA(
@@ -88,6 +94,7 @@ PomaPCA(
   ellipse=FALSE,
   load_length=1
 )
+
 
 PomaPCA(
   normalized,
@@ -106,4 +113,11 @@ PomaPCA(
 poma_cor <- PomaCorr(normalized)
 poma_cor$correlations
 poma_cor$corrplot
+
+BiocManager::install("PRONE")
+library(PRONE)
+plot_condition_overview(normalized, condition="Diet")
+plot_condition_overview(normalized, condition="Treatment")
+
+plot_NA_heatmap(normalized, color_by=NULL,label_by=NULL, cluster_samples=TRUE,cluster_proteins= TRUE)
 
